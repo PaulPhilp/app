@@ -1,3 +1,5 @@
+console.log('Loading ... ')
+
 import { JetApp, EmptyRouter, HashRouter } from "webix-jet"
 
 import {
@@ -13,6 +15,8 @@ import {
 import {
         App
 } from './interfaces/App'
+
+console.log(App)
 
 // import StartView from "./views/start"
 
