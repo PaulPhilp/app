@@ -1,6 +1,6 @@
 import {JetView} from "webix-jet";
 
-export default class PieChartView extends JetView {
+export default class BarChartView extends JetView {
 
     constructor(app) {
         console.log(`PieChartView.constructor()`)
@@ -15,7 +15,7 @@ export default class PieChartView extends JetView {
 
         let config = {
             height:250,
-            id: "piechart",
+            id: "renewals",
             select: true,
             cols:[
             {
@@ -23,16 +23,17 @@ export default class PieChartView extends JetView {
                 {
                     template:"<div style='width:100%;text-align:center'>Account Status</div>",
                     height:30
-                },
-                    {
-                    view: "chart",
-                    type:"pie",
-                    id: "pie1",
-                    localId: "pie1",
+                    },
+                {
+                    view:"chart",
+                    type:"bar",
+                    id: "bar1",
+                    localId: "bar1",
                     value:"#count#",
-                    label: "#title#",
-                    pieInnerText:"#count#",
-                    shadow:0,
+                    label:"#count#",
+                    barWidth:35,
+                    radius:0,
+                    label: "#customer_status#",
                     data:[]
                     } 
                 ]
@@ -41,36 +42,33 @@ export default class PieChartView extends JetView {
     return config
     }
 
-    init() {
-        console.log(`PieChart.init()`)
-        let pc = this.$$('pie1')
-        this.accounts.map((acct) => pc.add(acct))
-        console.log(this.accounts.length)
-        pc.data.group({
+    init( ) {
+        let bar = this.$$('bar1')
+        this.accounts.map((acct) => bar.add(acct))
+        bar.data.group({
             by:"customer_status",
             map: {
                 count:["customer_status","count"],
                 title: ["customer_status"]
                 }
             })
-        pc.render()
+        bar.render()
 
-	
         this.on(this.app, "app:accounts:dataready", id => {
             console.log(`EVENT: Piechart=>app:accounts:dataready`)
             
             if (this.service === null) this.service = this.app.getService('accountData')
             let accounts = this.service.getAllAccounts()
-            let pc = this.$$('pie1')
-            accounts.map((acct) => pc.add(acct))
-            pc.data.group({
+            let bar = this.$$('bar1')
+            accounts.map((acct) => bar.add(acct))
+            bar.data.group({
                 by:"customer_status",
                 map: {
                     count:["customer_status","count"],
                     title: ["customer_status"]
                     }
                 })
-            pc.render()
+            bar.render()
             })
             
         }

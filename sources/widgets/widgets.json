@@ -1,0 +1,18 @@
+[{
+    "menu": "mainapp_menu",
+    "menuItem": "Bar Chart",
+    "viewName": "barchart"
+    },{
+    "menu": "mainapp_menu",
+    "menuItem": "Data",
+    "viewName": "datatable"
+    },{
+    "menu": "mainapp_menu",
+    "menuItem": "Pie Chart",
+    "viewName": "piechart",
+    "service": "Accounts"
+    },{
+    "menu": "mainapp_menu",
+    "menuItem": "Saas",
+    "viewName": "saas"
+    }]

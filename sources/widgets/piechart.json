@@ -1,0 +1,6 @@
+{
+    "menu": "mainapp_menu",
+    "menuItem": "Pie Chart",
+    "viewName": "piechart",
+    "service": "Accounts"
+    }

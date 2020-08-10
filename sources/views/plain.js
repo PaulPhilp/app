@@ -7,6 +7,6 @@ export default class PlainView extends JetView {
 		}
 
 	config() {
-		return {template:"Start page", css:"webix_shadow_medium app_start"}
+		return {template:"Hello World!", css:"webix_shadow_medium app_start"}
 		}
 }

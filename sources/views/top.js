@@ -2,9 +2,9 @@ import {JetView, plugins} from "webix-jet";
 
 import PieChartView from 'views/piechart'
 import DataTableView from 'views/datatable'
-import StartView  from 'views/start'
+// import StartView  from 'views/start'
 
-export default class TopView extends JetView{
+export default class TopView extends JetView {
 
 	constructor(app) {
 		super(app)
@@ -13,7 +13,7 @@ export default class TopView extends JetView{
 		this.currIndex = -1
 		this.currItem = null
 		this.menuViews = [
-			this.app.createView(StartView, 'start'),
+			// this.app.createView(StartView, 'start'),
 			this.app.createView(DataTableView, 'datatable'),
 			this.app.createView(PieChartView, 'piechart'),
 			]
@@ -31,7 +31,9 @@ export default class TopView extends JetView{
 			id:"app:menu", 
 			localId:"app:menu", 
 			css:"app_menu",
-			width:180, layout:"y", select:true,
+			width:200, 
+			layout:"y", 
+			select:true,
 			template:"<span class='webix_icon #icon#'></span> #value# ",
 			data:[
 				{ value:"Dashboard",  	id: "start", 		icon:"wxi-columns" },
@@ -55,7 +57,7 @@ export default class TopView extends JetView{
 					let n  = this.menu.getIndexById(id)
 					console.log(`index = ${n}`)
 					console.log(this.menuViews[n])
-					// this.menuViews[n].refresh()
+					this.menuViews[n].refresh()
 					this.app.refresh('/top/' + id)
 					}
 				}

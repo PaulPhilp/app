@@ -1,0 +1,6 @@
+{
+    "type": "BigQuery",
+    "name": "Accounts",
+    "query": "SELECT name, customer_status FROM `amityamitydatasandbox.amity_accounts.data20200630`"
+    ,"storage": "webix"
+}

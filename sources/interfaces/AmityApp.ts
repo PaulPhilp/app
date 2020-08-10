@@ -1,11 +1,14 @@
 'use strict';
 
-import {JetView, JetApp} from "webix-jet";
-import { IJetConfig, IJetApp, IJetView } from "webix-jet/dist/types/interfaces"
+import {JetView, JetApp, plugins } from "webix-jet";
+import { IJetConfig, IJetApp, IJetView, IBaseView } from "webix-jet/dist/types/interfaces"
 import { BigQuery, Job, JobResponse } from '@google-cloud/bigquery'
 import { Index, Series, DataFrame } from "data-forge"
 import abslog from 'abslog';
-// import metrics from 'metrics'
+import metrics from 'metrics'
+
+// webpack require
+declare function require(_$url: string): any;
 
 import {
 	Machine,
@@ -25,6 +28,7 @@ import {
 
 import { stateValuesEqual } from "xstate/lib/State";
 import { createNonNullExpression } from "typescript";
+import { readdirSync } from 'fs-extra';
 const { choose, log } = actions;
 
 export type Nullable<T> = { [P in keyof T]: T[P] } | null 
@@ -687,15 +691,137 @@ export interface IWidget extends IJetView{
 	name: string
 	pathname: string
 	configuration: IAppOptions
-	logger(): void
-	log(): void
-	// metrics: metrics.Report
+	viewName: string
+	menuItem: string
+	menuIcon: string
 
-	constructor(app: IApp, name: string, config?: IAppOptions): void
+	logger(): any
+	log(): void
+	metrics: metrics.Report
+
+	// constructor(app: IApp, name: string, config?: IAppOptions): void
 
     // load(): 			void
 	// start(): 		void
 	// update(): 		void
+	}
+
+export class MenuWidget extends JetView implements IWidget  {
+
+	public 	name: string
+	public 	pathname: string
+	public  configuration: IAppOptions
+	public  viewName: string = ""
+	public	menuItem: string = ""
+	public	menuIcon: string = ""
+
+	private menuName: string = "mainapp_menu"
+	public 	metrics: metrics.Report
+	private widgets: Array<IWidget> = []
+	private menu: any
+	private menuView: any
+	private menuViews: Array<IJetView> = Array<IJetView>(0)
+
+	constructor(app: IJetApp, name: string, config?: IAppOptions) {
+		super(app, config)
+		console.log(`MenuWidget(${name})`)
+
+		this.menu = {
+			view:"menu", 
+			id:"app:menu", 
+			localId:"app:menu", 
+			css:"app_menu",
+			width:180, 
+			layout:"y", 
+			select:true,
+			template:"<span class='webix_icon #icon#'></span> #value# ",
+			on:{
+				onBeforeSelect: function (id) {
+					console.log(`onBeforeSelect(${id})`)
+					return true
+					},
+
+				onMenuItemClick: (id) => {
+					console.log(`onMenuItemClick(${id})`)
+					return
+
+					if (this.menuView === null) return
+					this.menuView.select(id)
+					let n  = this.menuView.getIndexById(id)
+					console.log(`index = ${n}`)
+					let view = this.menuViews[n]
+					view.render("widget_panel")
+				console.log(view)
+					// view.render(this.app, '/mainapp/' + id)
+					// this.app.show()
+					}
+				},
+				data: []
+			}
+		}
+
+	public addWidget(widget: IWidget): void {
+		console.log(`addWidget()`)
+		this.widgets.push(widget)
+		}
+
+	public addWidgets(widgets: Array<IWidget>): void {
+		console.log(`addWidgets()`)
+		widgets.map((widget: IWidget) => { this.addWidget(widget)})
+		this.addMenuItems(this.widgets)
+		}
+
+	private addMenuItem(widget: IWidget) {
+		console.log(`addMenuItem()`)
+
+		let newItem = {
+			id: widget.viewName,
+			value: widget.menuItem,
+			icon: "mdi mdi-view-dashboard"
+			}
+
+		this.menu.data.push(newItem)
+
+		const view = require(`./../views/${widget.viewName}`)
+		this.menuViews.push(this.app.createView(view, widget.viewName))
+		
+		}
+
+	private addMenuItems(widgets: Array<IWidget>) {
+		console.log(`addMenuItems()`)
+		widgets.map((widget) => { this.addMenuItem(widget)})
+		// console.log(this.menu.data)
+		}
+
+	config() {
+		console.log(`MenuWidget.config()`)
+		console.log(this.menu)
+		return this.menu
+		}
+
+	init() {
+		console.log(`MenuView.init()`)
+		this.use(plugins.Menu, "app:menu")
+		}
+
+	ready() {
+		console.log(`MenuWidget.ready()`)
+		console.log(this.menuViews)
+		console.log(this.$$('app:menu'))
+		this.menuView = this.$$('app:menu')
+		let n = this.menuView.getIdByIndex(0)
+		// this.menuView.select(n)
+		}
+
+	logger(): any {
+		return console
+		}
+
+	log(): void {
+
+		}
+
+	
 	}
 
 export interface IAppOptions {

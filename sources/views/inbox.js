@@ -15,7 +15,7 @@ export default class PieChartView extends JetView {
 
         let config = {
             height:250,
-            id: "piechart",
+            id: "inbox",
             select: true,
             cols:[
             {
@@ -41,7 +41,7 @@ export default class PieChartView extends JetView {
     return config
     }
 
-    init() {
+    init( ) {
         console.log(`PieChart.init()`)
         let pc = this.$$('pie1')
         this.accounts.map((acct) => pc.add(acct))

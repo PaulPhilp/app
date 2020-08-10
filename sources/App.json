@@ -1,0 +1,8 @@
+{
+    "name": "Test Apps",
+    "container": "MainApp",
+    "router": "UrlRouter",
+    "debug": true,
+    "start": "/mainapp",
+    "views": []
+    }

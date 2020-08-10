@@ -1,6 +1,7 @@
-console.log('Loading ... ')
 
-import { JetApp, EmptyRouter, HashRouter } from "webix-jet"
+const AppConfig = require("./App.json")
+
+import { JetApp, JetView, EmptyRouter, HashRouter, UrlRouter } from "webix-jet"
 
 import {
     IApp,
@@ -16,7 +17,6 @@ import {
         App
 } from './interfaces/App'
 
-console.log(App)
 
 // import StartView from "./views/start"
 
@@ -59,11 +59,58 @@ const keyFilename = "./master-crossing-687-068cbf4d1fa4.json"
 const config: IAppOptions = {
     name: "Test Apps",
     container: "MainApp",
+    router: UrlRouter,
     debug: true,
-    start: "/top/plain",
+    start: "/mainapp",
     views: [{
         }]
     }
+
+class MainView extends JetView {
+        config () {
+                return {
+                        localId: "MainApp",
+                        id: "MainApp",
+                        name: "MainApp",
+                        "rows":[
+                                {
+                                "view":"template",
+                                "template":"Header",
+                                "role":"placeholder",
+                                "height":50,
+                                "tooltip":{
+                                        "template":"Hello World"
+                                }
+                                },
+                                {
+                                "cols":[
+                                        {
+                                        "view":"template",
+                                        "template":"Menu",
+                                        "role":"placeholder",
+                                        "width":250
+                                        },
+                                        {
+                                        "view":"template",
+                                        "template":"Content",
+                                        "role":"placeholder"
+                                        }
+                                ],
+                                "type":"wide"
+                                },
+                                {
+                                "view":"template",
+                                "template":"Footer ",
+                                "role":"placeholder",
+                                "height":50
+                                }
+                        ],
+                        "disabled":false,
+                        "isolate":false,
+                        "type":"wide"
+                        }
+        }
+}
 
 class MainApp extends App {
 
@@ -75,6 +122,7 @@ class MainApp extends App {
         constructor(config:IAppOptions) {
                 super(config)
                 console.log(`MainApp()`)
+                console.log(config)
                 this.uiState = defaultAppStateMacine
                 this.setService('accountData', {
                         getAllAccounts: () => { return this.getData()}
@@ -83,7 +131,7 @@ class MainApp extends App {
 
         getData(): Array<any> {
                 console.log(`Main.getData()`)
-                console.log(this.data)
+                // console.log(this.data)
                 return this.data 
                 }
 
@@ -114,6 +162,9 @@ class MainApp extends App {
                 let fn = this.receiveData.bind(this)
                 query.run(fn)
 
+                console.log(`Main SubView`)
+                console.log(this.getSubView())
+
                 // let pandas = new PandasDataSource(data)
                 // console.log(app)
                 // let chart = new PieChart(app, "/piechartAccounts")
@@ -138,75 +189,14 @@ class MainApp extends App {
         }
     }
 
-let mainApp = new MainApp(config)
+function loadAppManifest() { }
+
+AppConfig.router = UrlRouter
+let mainApp = new MainApp(AppConfig)
 mainApp.start()
-
-const demos = new webix.DataCollection({ data:[
-        { group:4, value:"Using Datatable with Subview", app: mainApp, id:"data" },
-        ]})
-
 
 if (!BUILD_AS_MODULE){
         webix.ready(() => {
-                mainApp.render() 
-                });
+                mainApp.render()
+                })
         }
-
-
-/***
-webix.ready(function(){
-    webix.ui({
-        cols:[
-            {
-                id: "hchart", view:"highchart",
-                modules:["series-label", "exporting", "export-data"],
-                settings:{
-                    title: {
-                            text: 'Highcharts with Webix: Solar Employment Growth by Sector, 2010-2016'
-                    },
-                    subtitle: {
-                            text: 'Source: thesolarfoundation.com'
-                    },
-                    yAxis: {
-                            title: {
-                                    text: 'Number of Employees'
-                            }
-                    },
-                    legend: {
-                            layout: 'vertical',
-                            align: 'right',
-                            verticalAlign: 'middle'
-                    },
-                    plotOptions: {
-                            series: {
-                                    label: {
-                                            connectorAllowed: false
-                                    },
-                                    pointStart: 2010
-                            }
-                    },
-                    series: [{
-                            name: 'Installation',
-                            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-                    }, {
-                            name: 'Manufacturing',
-                            data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-                    }, {
-                            name: 'Sales & Distribution',
-                            data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-                    }, {
-                            name: 'Project Development',
-                            data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-                    }, {
-                            name: 'Other',
-                            data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-                    }]
-                }
-            },
-            {view:"resizer"},
-            { gravity:0.2 }
-        ]
-    });
-});
-***/
-

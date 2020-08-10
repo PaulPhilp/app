@@ -57,12 +57,14 @@ export abstract class App extends JetApp implements IApp{
 
 	show(): Promise<any> { 
         return Promise.resolve(true)
-        }
+		}
+		
 	constructor(config: any) {
         super(config)
-        console.log(`AmityApp()`)
+        console.log(`App()`)
 		this.name = config.name
-		this.log = abslog(this.logger)
+		// this.logger = console
+		this.log = abslog(console)
 		this.attachEvent("app:error:resolve", function(name: string, error: string){
 			window.console.error(error);
 		    });

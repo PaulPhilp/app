@@ -1,0 +1,86 @@
+import {JetView, JetApp} from "webix-jet";
+import { IJetConfig, IJetApp, IJetView } from "webix-jet/dist/types/interfaces"
+import { JobResponse } from '@google-cloud/bigquery';
+
+type Json =
+    | string
+    | number
+    | boolean
+    | null
+    | { [property: string]: Json }
+    | Json[];
+
+type Method = (...args: any[]) => any
+
+interface Methods {
+	[key: string]: Method
+    }
+
+enum ServiceDataType {
+    JSON,
+    XML,
+    CSV,
+    JSARRAY,
+    }
+
+enum DataSourceType {
+    GRAPHQL = "GRAPHQL",
+    BIGQUERY = "BIGQUERY",
+    FILE = "FILE",
+    URL = "URL"
+    }
+      
+export interface IService {
+    name: string
+    version: string
+    datatype: ServiceDataType
+
+    load(): void
+    loadNext(): void
+    add(): void
+    serialize() : Json
+
+    count(): number
+    each(): void
+
+
+    // useValue?: any
+    // useDefinedValue?: any
+    // useFactory?: (...args: any[]) => any
+    // useClass?: { new(...args: any[]): any; }
+    // usePandas?: {}
+    // useCube?: {}
+    // useDataCollection?: {}
+    // deps?: any[]
+
+    // NOTE: Providers will have extra properties which are not statically defined here.
+    // This extra property is needed to make TSC less strict, and enable extra properties.
+    [others: string]: any;
+    methods?: Methods;
+    }
+
+abstract class Service implements IService {
+    name: string
+    version: string
+    datatype: ServiceDataType
+
+    load(): void {}
+    loadNext(): void {}
+    add(): void {}
+    serialize(): Json { return {} }
+
+    count(): number { return 0 }
+    each(): void {}
+    }
+
+class SimpleService {
+
+
+    }
+
+class TreeService  { }
+
+class PandasService  { }
+
+class CubeService  { }
+

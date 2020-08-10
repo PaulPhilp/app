@@ -17,7 +17,7 @@ module.exports = function(env) {
 	let config = {
 		mode: production ? "production" : "development",
 		entry: {
-			"main" : "./sources/main.ts"
+			"mainapp" : "./sources/mainapp.ts"
 		},
 		node: {
 			tls: 'empty',
@@ -59,11 +59,13 @@ module.exports = function(env) {
 					test: /\.(less|css)$/,
 					use: [ MiniCssExtractPlugin.loader, "css-loader", "less-loader" ]
 				},
+				/***
 				{
 					test: /\.(json)$/,
 					exclude: [ /node_modules/ ],
 					use: ["json-loader" ]
 				}
+				***/
 			]
 		},
 		resolve: {
