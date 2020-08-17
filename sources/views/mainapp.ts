@@ -1,7 +1,6 @@
 import { JetView } from "webix-jet"
 import { MenuWidget } from '../interfaces/AmityApp';
 let widgets = require("../widgets/widgets.json")
-console.log(widgets)
 
 const mainMenu = {
 	"cols": [
@@ -11,7 +10,7 @@ const mainMenu = {
 			"name": "mainapp_menu",
 			"view": "sidebar",
 			"width": 200,
-			"height": 600,
+			"height": 200,
 			"data": [
 				{ "id": "dash", "value": "Dashboard", "icon": "mdi mdi-view-dashboard" }
 			]

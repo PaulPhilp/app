@@ -1,3 +1,4 @@
+import { createModuleResolutionCache } from "typescript";
 import {JetView} from "webix-jet";
 
 export default class DashboardView extends JetView {
@@ -14,16 +15,29 @@ export default class DashboardView extends JetView {
         console.log(`DashboardView.config()`)
 
         let config = {
-            height:250,
-            id: "saas",
-            view: "dataview",
-            select:true,
-            type: {
-                height: 60,
-                width:120
+            maxWidth: 1000,
+            borderless: true,
+            type: "line",
+            cols: [{
+                borderless: true,
+                id: "saas1",
+                view: "bignumber",
+                subtitle: "Wonderful"
                 },
-            datatype: "json",
-            template: "<div class='webix_strong'>#customer_status#</div><div>#count#</div>"
+                {},
+                
+            {   borderless: true,
+                id: "saas2",
+                view: "bignumber"
+                },
+                {},
+            {            
+                id: "saas3",
+                borderless: true,
+                view: "bignumber"
+                },
+                {},
+            ]
         }
 
     console.log(config)
@@ -32,20 +46,23 @@ export default class DashboardView extends JetView {
 
     init( ) {
         console.log(`DashboardView.init()`)
-        let pc = this.$$('saas')
+        let saas1 = this.$$('saas1')
+        let saas2 = this.$$('saas2')
+        let saas3 = this.$$('saas3')
         let status = [
-            {"customer_status": "active", count: 0},
-            {"customer_status": "inactive", count: 0},
-            {"customer_status": "churn", count:0},
+            {"customer_status": "active",   subtitle: "Active Accounts",    count: 0,   prevCount: 30},
+            {"customer_status": "inactive", subtitle: "Expired Accounts",   count: 0,   prevCount: 38},
+            {"customer_status": "churned",  subtitle: "Churned Accounts",   count: 0,   prevCount: 80},
         ]
 
         this.accounts.map((acct) => {
             if (acct.customer_status == 'active') status[0].count++
             if (acct.customer_status == 'inactive') status[1].count++
-            if (acct.customer_status == 'churn') status[2].count++
+            if (acct.customer_status == 'churned') status[2].count++
         })
-        console.log(status)
-        status.map((s) => { pc.add(s)})
+        saas1.add(status[0]);
+        saas2.add(status[1])
+        saas3.add(status[2])
 
 	
         this.on(this.app, "app:accounts:dataready", id => {
@@ -53,16 +70,29 @@ export default class DashboardView extends JetView {
             
             if (this.service === null) this.service = this.app.getService('accountData')
             let accounts = this.service.getAllAccounts()
-            let pc = this.$$('saas')
-            accounts.map((acct) => pc.add(acct))
-            pc.data.group({
-                by:"customer_status",
-                map: {
-                    count:["customer_status","count"],
-                    title: ["customer_status"]
-                    }
-                })
-            pc.render()
+            let saas1 = this.$$('saas1')
+            let saas2 = this.$$('saas2')
+            let saas3 = this.$$('saas3')
+
+            let status = [
+                {"customer_status": "active", count: 0},
+                {"customer_status": "inactive", count: 0},
+                {"customer_status": "churned", count:0},
+            ]
+    
+            this.accounts.map((acct) => {
+                if (acct.customer_status == 'active') status[0].count++
+                if (acct.customer_status == 'inactive') status[1].count++
+                if (acct.customer_status == 'churned') status[2].count++
+            })
+
+            console.log(status)
+            saas1.add(status[0]);
+            saas1.api.subtitle = "active"
+            saas1.define("subtitle", "Active Accounts");
+            saas1.render()
+            saas2.add(status[1])
+            saas3.add(status[2])
             })
             
         }

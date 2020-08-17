@@ -34,6 +34,8 @@ import {
 import abslog from 'abslog'
 import metrics from 'metrics'
 
+import { createBignumberComponent } from './components/bignumber';
+
 // type Nullable<T> = { [P in keyof T]: T[P] | null }
 
 declare const BUILD_AS_MODULE: boolean
@@ -53,6 +55,8 @@ const key = {
       }
 
 const keyFilename = "./master-crossing-687-068cbf4d1fa4.json"
+
+createBignumberComponent()
 
 // let startView = new StartView()
 

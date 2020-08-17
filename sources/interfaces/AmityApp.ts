@@ -748,10 +748,9 @@ export class MenuWidget extends JetView implements IWidget  {
 					if (this.menuView === null) return
 					this.menuView.select(id)
 					let n  = this.menuView.getIndexById(id)
-					console.log(`index = ${n}`)
 					let view = this.menuViews[n]
 					view.render("widget_panel")
-				console.log(view)
+				
 					// view.render(this.app, '/mainapp/' + id)
 					// this.app.show()
 					}
@@ -780,11 +779,12 @@ export class MenuWidget extends JetView implements IWidget  {
 			icon: "mdi mdi-view-dashboard"
 			}
 
+		if (widget.menuIcon) newItem.icon =  `mdi ${widget.menuIcon}`
+
 		this.menu.data.push(newItem)
 
 		const view = require(`./../views/${widget.viewName}`)
 		this.menuViews.push(this.app.createView(view, widget.viewName))
-		
 		}
 
 	private addMenuItems(widgets: Array<IWidget>) {
@@ -806,8 +806,6 @@ export class MenuWidget extends JetView implements IWidget  {
 
 	ready() {
 		console.log(`MenuWidget.ready()`)
-		console.log(this.menuViews)
-		console.log(this.$$('app:menu'))
 		this.menuView = this.$$('app:menu')
 		let n = this.menuView.getIdByIndex(0)
 		// this.menuView.select(n)

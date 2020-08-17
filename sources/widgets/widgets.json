@@ -1,18 +1,22 @@
 [{
     "menu": "mainapp_menu",
     "menuItem": "Bar Chart",
-    "viewName": "barchart"
+    "viewName": "barchart",
+    "menuIcon": "mdi-chart-bar"
     },{
     "menu": "mainapp_menu",
     "menuItem": "Data",
-    "viewName": "datatable"
+    "viewName": "datatable",
+    "menuIcon": "mdi-table"
     },{
     "menu": "mainapp_menu",
     "menuItem": "Pie Chart",
     "viewName": "piechart",
-    "service": "Accounts"
+    "service": "Accounts",
+    "menuIcon": "mdi-chart-pie"
     },{
     "menu": "mainapp_menu",
-    "menuItem": "Saas",
-    "viewName": "saas"
+    "menuItem": "Dashboard",
+    "viewName": "saas",
+    "menuIcon": "mdi-monitor-dashboard"
     }]
