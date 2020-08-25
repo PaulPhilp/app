@@ -61,11 +61,11 @@ interface IQueryStateMachineConfig extends IQueryStateSchema {
 let queryAssign = assign
 
 function assignSuccess() {
-	console.log(`assignSuccess()`)
+	// console.log(`assignSuccess()`)
 	}
 
 function assignFailure () {
-	console.log(`assignFailure()`)
+	// console.log(`assignFailure()`)
 	}
 
 const getDataFromAPI = (job: any): Promise<any> => {
@@ -184,8 +184,8 @@ export class Query implements IQuery {
 	private machine: Nullable<QueryMachine>
 
 	constructor(options: BigQueryOptions) {
-		console.log(`new Query()`)
-		console.log(options)
+		// console.log(`new Query()`)
+		// console.log(options)
 		this.options = options
 		this.query = options.query
 		this.bigquery = new BigQuery(options)
@@ -194,8 +194,8 @@ export class Query implements IQuery {
 		}
 
 	run(cb: any): void {
-		console.log(`run()`)
-		console.log(this.query)
+		// (`run()`)
+		// console.log(this.query)
 		this.bigquery.createQueryJob({
 			query: this.query,
 			location: 'us'
@@ -296,7 +296,7 @@ class QueryMachine  {
 			success: {
 				type: 'final',
 				action: (ctx: any, evt: any) => {
-					console.log('final action')
+					// console.log('final action')
 					},
 				data: {
 					data: (context: any, event: any) => {
@@ -312,13 +312,13 @@ class QueryMachine  {
 	}
 
 	constructor(job: Job) {
-		console.log('QueryMachine()')
+		// console.log('QueryMachine()')
 		this.job = job
 		this.config.id = this.config.id + `-${job.id}`
 		this.machine = Machine<IQueryContext, IQueryStateMachineConfig, QueryEvent>(this.config)
 		this.service = interpret(this.machine)
 			.onTransition((state) => {
-				console.log(`onTransition(${JSON.stringify(state.value)})`)
+				// console.log(`onTransition(${JSON.stringify(state.value)})`)
 				})
 
 		this.service.start()
@@ -326,10 +326,10 @@ class QueryMachine  {
 		}
 
 	fetch(callback: any) {
-		console.log(`fetch(${typeof callback})`)
 		let currentState = this.service.state
 		this.service.subscribe(
-			(state: any) => console.log(state),
+			(state: any) => { // console.log(state)
+				},
 			undefined, 
 			callback)
 		currentState = this.service.send("FETCH")

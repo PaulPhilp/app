@@ -43,20 +43,18 @@ export default class TopView extends JetView {
 			on:{
 
 				onBeforeSelect: function (id) {
-					console.log(`onBeforeSelect(${id})`)
+					// console.log(`onBeforeSelect(${id})`)
 					return true
 					},
 
 				onMenuItemClick: (id) => {
-					console.log(`onMenuItemClick(${id})`)
+					// console.log(`onMenuItemClick(${id})`)
 
 					if (this.menu === null) return
 
 					this.menu.select(id)
 					return
 					let n  = this.menu.getIndexById(id)
-					console.log(`index = ${n}`)
-					console.log(this.menuViews[n])
 					this.menuViews[n].refresh()
 					this.app.refresh('/top/' + id)
 					}
@@ -98,7 +96,6 @@ export default class TopView extends JetView {
 		this.menu = this.app.$$('app:menu')
 		let id = 0
 		let n = this.menu.getIdByIndex(0)
-		console.log(n)
 		
 		this.menu.select(n)
 		return 

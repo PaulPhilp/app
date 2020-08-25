@@ -3,7 +3,7 @@ import {JetView} from "webix-jet";
 export default class BarChartView extends JetView {
 
     constructor(app) {
-        console.log(`PieChartView.constructor()`)
+        // console.log(`PieChartView.constructor()`)
         super(app)
 
         this.service = app.getService(`accountData`)
@@ -11,7 +11,7 @@ export default class BarChartView extends JetView {
         }
 
     config() { 
-        console.log(`PieChartView.config()`)
+        // console.log(`PieChartView.config()`)
 
         let config = {
             height:250,
@@ -55,7 +55,7 @@ export default class BarChartView extends JetView {
         bar.render()
 
         this.on(this.app, "app:accounts:dataready", id => {
-            console.log(`EVENT: Piechart=>app:accounts:dataready`)
+            // console.log(`EVENT: Piechart=>app:accounts:dataready`)
             
             if (this.service === null) this.service = this.app.getService('accountData')
             let accounts = this.service.getAllAccounts()

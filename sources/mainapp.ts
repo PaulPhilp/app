@@ -72,6 +72,7 @@ const config: IAppOptions = {
 
 class MainView extends JetView {
         config () {
+                console.log(`MainView.config()`)
                 return {
                         localId: "MainApp",
                         id: "MainApp",
@@ -114,6 +115,7 @@ class MainView extends JetView {
                         "type":"wide"
                         }
         }
+
 }
 
 class MainApp extends App {
@@ -125,8 +127,6 @@ class MainApp extends App {
 
         constructor(config:IAppOptions) {
                 super(config)
-                console.log(`MainApp()`)
-                console.log(config)
                 this.uiState = defaultAppStateMacine
                 this.setService('accountData', {
                         getAllAccounts: () => { return this.getData()}
@@ -134,19 +134,15 @@ class MainApp extends App {
                 }
 
         getData(): Array<any> {
-                console.log(`Main.getData()`)
-                // console.log(this.data)
                 return this.data 
                 }
 
         async receiveData(state: any): Promise<any> {
-                console.log('MainApp.receiveData()')
                 this.data = state.data.data
                 this.callEvent('app:accounts:dataReady', [])
                 }
 
     async start():Promise<any> {
-                console.log(`MainApp.start()`)
                 const service = interpret(this.uiState as StateMachine<any, any, any>).onTransition(state => {
                         // console.log(state);
                         });
@@ -165,9 +161,6 @@ class MainApp extends App {
                 let query = new Query(options)
                 let fn = this.receiveData.bind(this)
                 query.run(fn)
-
-                console.log(`Main SubView`)
-                console.log(this.getSubView())
 
                 // let pandas = new PandasDataSource(data)
                 // console.log(app)

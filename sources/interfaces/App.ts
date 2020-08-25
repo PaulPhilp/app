@@ -61,7 +61,6 @@ export abstract class App extends JetApp implements IApp{
 		
 	constructor(config: any) {
         super(config)
-        console.log(`App()`)
 		this.name = config.name
 		// this.logger = console
 		this.log = abslog(console)

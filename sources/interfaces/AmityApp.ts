@@ -290,7 +290,7 @@ class QueryMachine  {
 	}
 
 	constructor(job: Job) {
-		console.log('QueryMachine()')
+		// console.log('QueryMachine()')
 		this.job = job
 		this.config.id = this.config.id + `-${job.id}`
 		this.machine = Machine<IQueryContext, IQueryStateMachineConfig, QueryEvent>(this.config)
@@ -304,7 +304,7 @@ class QueryMachine  {
 		}
 
 	fetch(callback: any) {
-		console.log(`fetch(${typeof callback})`)
+		// console.log(`fetch(${typeof callback})`)
 		let currentState = this.service.state
 		this.service.subscribe(
 			(state: any) => console.log(state),
@@ -325,8 +325,8 @@ export class Query implements IQuery {
 	private machine: Nullable<QueryMachine>
 
 	constructor(options: BigQueryOptions) {
-		console.log(`new Query()`)
-		console.log(options)
+		// console.log(`new Query()`)
+		// console.log(options)
 		this.options = options
 		this.query = options.query
 		this.bigquery = new BigQuery(options)
@@ -335,8 +335,8 @@ export class Query implements IQuery {
 		}
 
 	run(cb: any): void {
-		console.log(`run()`)
-		console.log(this.query)
+		// console.log(`run()`)
+		// console.log(this.query)
 		this.bigquery.createQueryJob({
 			query: this.query,
 			location: 'us'
@@ -518,12 +518,12 @@ type ReadyAppEvent =
 
 
   const isVisible = (context: any, event: any, state: any): boolean => {
-	console.log(`isVisible()`)
+	// console.log(`isVisible()`)
 	return context.visible
 	};
 
 const isHidden = (context: any, event: any, state: any): boolean => {
-	console.log(`isHidden()`)
+	// console.log(`isHidden()`)
 	return !context.visible
 	};
 
@@ -724,7 +724,7 @@ export class MenuWidget extends JetView implements IWidget  {
 
 	constructor(app: IJetApp, name: string, config?: IAppOptions) {
 		super(app, config)
-		console.log(`MenuWidget(${name})`)
+		// console.log(`MenuWidget(${name})`)
 
 		this.menu = {
 			view:"menu", 
@@ -737,12 +737,12 @@ export class MenuWidget extends JetView implements IWidget  {
 			template:"<span class='webix_icon #icon#'></span> #value# ",
 			on:{
 				onBeforeSelect: function (id) {
-					console.log(`onBeforeSelect(${id})`)
+					// console.log(`onBeforeSelect(${id})`)
 					return true
 					},
 
 				onMenuItemClick: (id) => {
-					console.log(`onMenuItemClick(${id})`)
+					// console.log(`onMenuItemClick(${id})`)
 					return
 
 					if (this.menuView === null) return
@@ -760,18 +760,19 @@ export class MenuWidget extends JetView implements IWidget  {
 		}
 
 	public addWidget(widget: IWidget): void {
-		console.log(`addWidget()`)
+		// (`addWidget()`)
 		this.widgets.push(widget)
 		}
 
 	public addWidgets(widgets: Array<IWidget>): void {
-		console.log(`addWidgets()`)
+		// console.log(`addWidgets()`)
 		widgets.map((widget: IWidget) => { this.addWidget(widget)})
 		this.addMenuItems(this.widgets)
 		}
 
 	private addMenuItem(widget: IWidget) {
-		console.log(`addMenuItem()`)
+		// console.log(`addMenuItem()`)
+		// console.log(widget)
 
 		let newItem = {
 			id: widget.viewName,
@@ -788,24 +789,24 @@ export class MenuWidget extends JetView implements IWidget  {
 		}
 
 	private addMenuItems(widgets: Array<IWidget>) {
-		console.log(`addMenuItems()`)
+		//console.log(`addMenuItems()`)
 		widgets.map((widget) => { this.addMenuItem(widget)})
 		// console.log(this.menu.data)
 		}
 
 	config() {
-		console.log(`MenuWidget.config()`)
-		console.log(this.menu)
+		// console.log(`MenuWidget.config()`)
+		// console.log(this.menu)
 		return this.menu
 		}
 
 	init() {
-		console.log(`MenuView.init()`)
+		// console.log(`MenuView.init()`)
 		this.use(plugins.Menu, "app:menu")
 		}
 
 	ready() {
-		console.log(`MenuWidget.ready()`)
+		// console.log(`MenuWidget.ready()`)
 		this.menuView = this.$$('app:menu')
 		let n = this.menuView.getIdByIndex(0)
 		// this.menuView.select(n)

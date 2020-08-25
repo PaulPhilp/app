@@ -1,8 +1,7 @@
 {
     "include": ["**/*", "**/.*"],
     "files":[
-        "node_modules/webix/webix.d.ts",
-        "node_modules/abslog/lib/abslog.d.ts"
+        "node_modules/webix/webix.d.ts"
     ],
     "compilerOptions": {
 

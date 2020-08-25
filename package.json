@@ -45,7 +45,7 @@
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "data-forge": "^1.8.9",
+    "data-forge": "^1.8.10",
     "dotenv-webpack": "^1.8.0",
     "fs-extra": "^9.0.1",
     "jq": "^1.7.2",

@@ -45,7 +45,7 @@ export default class PieChartView extends JetView {
         console.log(`PieChart.init()`)
         let pc = this.$$('pie1')
         this.accounts.map((acct) => pc.add(acct))
-        console.log(this.accounts.length)
+        // console.log(this.accounts.length)
         pc.data.group({
             by:"customer_status",
             map: {
@@ -73,5 +73,9 @@ export default class PieChartView extends JetView {
             pc.render()
             })
             
+        }
+
+    ready() {
+        console.log(`PieChart.ready()`)
         }
 }

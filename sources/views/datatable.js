@@ -4,14 +4,14 @@ import { JetView, JetApp, EmptyRouter, HashRouter } from "webix-jet"
 export default class DataView extends JetView {
 
 	constructor(app, name, data){
-		console.log(`DataView()`)
+		console.log(`DataView(${JSON.stringify(name)})`)
 		super(app, name)
 		this.service = this.app.getService('accountData')
 		this.accounts = this.service.getAllAccounts()
 	    }
 
     config() { 
-        console.log(`DataView.config()`)
+		console.log(`DataView.config()`)
 			let config = {
 				view:"datatable",
 				id: "datatable",
@@ -30,16 +30,17 @@ export default class DataView extends JetView {
 	
 			this.on(this.app, "app:accounts:dataready", id => {
 				console.log(`EVENT: DataView=>app:accounts:dataready`)
-				console.log(this.app)
 				if (this.service === null) this.service = this.app.getService('accountData')
 				let accounts = this.service.getAllAccounts()
-				console.log(accounts)
 				if (accounts) accounts.map((acct) => { this.accounts.push(acct)})
 				this.$$('datatable').parse(this.accounts)
 				this.$$('datatable').show()
 				})
 			}
 
+		ready() { 
+			console.log(`DataView.ready()`)
+			}
 
    }
 
