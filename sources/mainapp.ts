@@ -35,6 +35,7 @@ import abslog from 'abslog'
 import metrics from 'metrics'
 
 import { createBignumberComponent } from './components/bignumber';
+import { errorMonitor } from "events"
 
 // type Nullable<T> = { [P in keyof T]: T[P] | null }
 
@@ -189,11 +190,17 @@ class MainApp extends App {
 function loadAppManifest() { }
 
 AppConfig.router = UrlRouter
+AppConfig.debug = true
 let mainApp = new MainApp(AppConfig)
 mainApp.start()
 
 if (!BUILD_AS_MODULE){
         webix.ready(() => {
+
+                mainApp.attachEvent("app:error:resolve", function(err, url) {
+                        console.log(`WEBIX ERROR ::  ${err}`)
+                        console.log(`url ${url}`)
+                        })
                 mainApp.render()
                 })
         }

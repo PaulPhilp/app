@@ -4,7 +4,7 @@ import { JetView, JetApp, EmptyRouter, HashRouter } from "webix-jet"
 export default class DataView extends JetView {
 
 	constructor(app, name, data){
-		console.log(`DataView(${JSON.stringify(name)})`)
+		console.log(`DataView(${name})`)
 		super(app, name)
 		this.service = this.app.getService('accountData')
 		this.accounts = this.service.getAllAccounts()

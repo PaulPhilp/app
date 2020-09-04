@@ -17,8 +17,8 @@ export default class DashboardView extends JetView {
             borderless: true,
             type: "line",
             cols: [{
-                borderless: true,
                 id: "saas1",
+                borderless: true,
                 view: "bignumber",
                 title: {
                     label: "Active",
@@ -27,10 +27,20 @@ export default class DashboardView extends JetView {
                     },
                 subtitle: {
                     label: "active accounts",
-                    color: "navy",
-                    "text-decoration": "none",
-                    "font-weight": "none"
+                    color: "slategrey"
                     },
+                value: {
+                    field: "count",
+                    color: "teal",
+                    format: "0"
+                    },
+                diff: {
+                    color: "navy",
+                    "font-size": "10px",
+                    "negative-color": "red",
+                    label: "accounts",
+                    "font-size": "14px",
+                }
                 },
                 {},
                 
@@ -44,9 +54,20 @@ export default class DashboardView extends JetView {
                     },
                 subtitle: {
                     label: "inactive accounts",
-                    color: "navy"
+                    color: "slategrey"
                     },
-                },
+                value: {
+                    field: "count",
+                    color: "teal",
+                    format: "0"
+                    },
+                diff: {
+                    color: "navy",
+                    "font-size": "14px",
+                    "negative-color": "red",
+                    label: "accounts"
+                    },
+                    },
                 {},
             {            
                 id: "saas3",
@@ -59,28 +80,43 @@ export default class DashboardView extends JetView {
                     },
                 subtitle: {
                     label: "churned accounts",
-                    color: "navy"
+                    color: "slategrey"
+                    },
+                value: {
+                    field: "count",
+                    color: "teal",
+                    format: "0"
+                    },
+                diff: {
+                    "font-size": "14px",
+                    color: "navy",
+                    "negative-color": "red",
+                    label: "Accounts"
                     },
                 },
                 {},
             ]
         }
         
-    console.log(config)
+    // console.log(config)
     return config
     }
 
     init() {
         console.log(`DashboardView.init()`)
+    }
 
-        console.log(`saas1`)
+    ready() {
+        console.log(`DashboardView.ready()`)
+
+        // console.log(`saas1`)
         let saas1 = this.$$('saas1')
-        console.log(saas1)
+        // console.log(saas1)
 
-        console.log(`saas2`)
+        // console.log(`saas2`)
         let saas2 = this.$$('saas2')
 
-        console.log(`saas3`)
+        // console.log(`saas3`)
         let saas3 = this.$$('saas3')
 
         let status = [
@@ -95,47 +131,13 @@ export default class DashboardView extends JetView {
             if (acct.customer_status == 'churned') status[2].count++
         })
 
-        saas1.add(status[0])
-        saas1.render()
+        saas1.add([status[0]], 0)
+        saas1.refresh()
 
-        saas2.add(status[1])
+        saas2.add([status[1]], 0)
         saas2.refresh()
 
-        saas3.add(status[2])
+        saas3.add([status[2]], 0)
         saas3.refresh()
-	
-        this.on(this.app, "app:accounts:dataready", id => {
-            console.log(`EVENT: Piechart=>app:accounts:dataready`)
-            
-            if (this.service === null) this.service = this.app.getService('accountData')
-            let accounts = this.service.getAllAccounts()
-            let saas1 = this.$$('saas1')
-            let saas2 = this.$$('saas2')
-            let saas3 = this.$$('saas3')
-
-            let status = [
-                {"customer_status": "active", count: 0},
-                {"customer_status": "inactive", count: 0},
-                {"customer_status": "churned", count:0},
-            ]
-    
-            this.accounts.map((acct) => {
-                if (acct.customer_status == 'active') status[0].count++
-                if (acct.customer_status == 'inactive') status[1].count++
-                if (acct.customer_status == 'churned') status[2].count++
-            })
-
-            saas1.add(status[0]);
-            saas1.api.subtitle = "active"
-            saas1.define("subtitle", "Active Accounts");
-            saas1.render()
-
-            saas2.add(status[1])
-            saas2.refresh()
-
-            saas3.add(status[2])
-            saas3.refresh()
-            })
-            
     }
 }

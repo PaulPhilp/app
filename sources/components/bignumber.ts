@@ -1,74 +1,78 @@
 
+import { RSA_PSS_SALTLEN_AUTO } from "constants"
+import numeral from "numeral"
 export function createBignumberComponent(): void {
-    console.log(`createBignumberComponent()`)
+    // console.log(`createBignumberComponent()`)
 
     let subtitle: string = "Subtitle"
+    let selectedId = ""
 
+    let dv = {
+        height: 175,
+        view: "dataview",
+        title: { 
+            label: "Title",
+            titleColor: "teal",
+        },
+
+        subtitle: { 
+            label: subtitle,
+            subtitleColor: "red",
+            },
+        type: {height: 175, width: 175 },
+
+        // sizeToContent:true,
+        xCount:1, 
+        yCount:1
+        }
+        
     let api = {
         name: "bignumber",
+        height: 175,
+        width: 175,
 
         //default values for configuration settings
-        defaults: {
-                title: { 
-                    label: "Title",
-                    titleColor: "teal",
-                },
-
-                subtitle: { 
-                    label: subtitle,
-                    subtitleColor: "red",
-                    },
-
-                height: 150,
-                width: 150,
-                sizeToContent:true,
-                xCount:1, 
-                yCount:1,
-
-                // valueColor: "black",
-                // valueFormat: "%.2f",
-
-                // backgroundColor: "white",
-
-                /***
-                comparison: {
-                        show: true,
-                        display: "Change",  // Value, Progess, PercentProgress
-                        showLabel: true,
-                        label: ""
-                        },
-
-                conditinalColor: [
-                    {"test": "GTE", value1: 0, style: {valueColor: "green", titleColor: "blue"}},
-                    {"test": "BETWEEN",  value1: 0, value2: -100, style: {valueColor: "red"}}
-                    // EQ, NE, GT, LTE, BETWEEN, NOTBETWEEN, NULL, NOTNULL
-                        ],
-                ***/
-
-                type: {
-                        height: 175,
-                        width: 200
-                        },
-                    },
+        defaults: dv,
                 
-    
         // logic on init
         $init: function (config) {
-                console.log(`bignumber.$init()`)
+            console.log(`bignumber.$init()`)
 
-                this.$view.className += " bignumber";
-                config.template = this._buildTemplate(config)
+            /***
+            let datatable = webix.ui({
+                view:"datatable",
+                id: config.id + "_datatable",
+                hidden: true,
+                columns:[
+                    { id:"rank",    header:"",              width:50},
+                    { id:"title",   header:"Film title",    width:200},
+                    { id:"year",    header:"Released",      width:80},
+                    { id:"votes",   header:"Votes",         width:100}
+                    ]
+                });
+                ***/
 
-                this.attachEvent("onClick", function(id){
-                        this.select(id);
-                        });
-                },
+            this.order = []
+            this.$view.className += " bignumber";
+  
+            config.template = this._buildTemplate(config)
+            config.scroll = "y"
+
+            this.attachEvent("onItemClick", function(id){
+                webix.message(`Item clicked + ${id} :: ${this.selectedId}`);
+                if (this.selectedId != "") this.unselect(this.selectedId)
+                this.select(id)
+                this.selectedId = id
+                })
+            },
 
             _buildTemplate(config) {
                 console.log(`_buildTemplate()`)
                 console.log(config)
 
                 function buildTitleStyle(obj, common, index) {
+                    console.log(`buildTitleStyle()`)
+                    console.log(obj)
 
                     let style = ""
                     let title = config.title
@@ -98,12 +102,29 @@ export function createBignumberComponent(): void {
                     return style
                     }
 
+                function buildValueStyle(obj, common, index) {
+
+                    let style = ""
+                    let value = config.value
+                    if (value) {
+                        if (value.color) style += `color:${value.color}; `
+                        if (value["background-color"]) style += `background-color:${value["background-color"]}; `
+                        if (value["font-size"]) style += `font-size:${value["font-size"]}; `
+                        if (value["font-weight"]) style += `font-weight:${value["font-weight"]}; `
+                        if (value["text-align"]) style += `text-align:${value["text-align"]}; `
+                        if (value["text-decoration"]) style += `text-decoration:${value["text-decoration"]}; `
+                        }
+                    return style
+                    }
+
                 function buildDiffStyle(obj, common, index) {
 
                     let style = ""
                     let diff = config.diff
+                    let diffValue = obj.count - obj.prevCount
                     if (diff) {
-                        if (diff.color) style += `color:${diff.color}; `
+                        if (diff.color && diffValue >= 0) style += `color:${diff.color}; `
+                        else if (diff.color && diffValue < 0) style += `color:${diff["negative-color"]}; `
                         if (diff["background-color"]) style += `background-color:${diff["background-color"]}; `
                         if (diff["font-size"]) style += `font-size:${diff["font-size"]}; `
                         if (diff["font-weight"]) style += `font-weight:${diff["font-weight"]}; `
@@ -115,24 +136,35 @@ export function createBignumberComponent(): void {
     
                 let templateFn = function(obj, common, index) {
                     console.log(`templateFn()`)
+                    console.log(obj)
         
-                    let customerStatus = obj.customer_status.toUpperCase()
-                    let diff = obj.count - obj.prevCount
-                    let diffStyle = buildDiffStyle(obj, common, index)
-                    let diffTemplate = ""
-                    if (diff > 0)
-                        diffTemplate = `<span class='webix_icon mdi mdi-arrow-up'></span> <span style="${diffStyle}"; >${diff}</span>`
-                    else if (diff < 0)
-                        diffTemplate = `<span class='webix_icon mdi mdi-arrow-down'></span> <span style="${diffStyle}"; >${diff}</span>`
+                    let customerStatus = obj[0].customer_status.toUpperCase()
+                    let diff = obj[0].count - obj[0].prevCount
 
-                    let titleStyle = buildTitleStyle(obj, common, index)
-                    let subtitleStyle = buildSubtitleStyle(obj, common, index)
+                    let valueField = "value"
+                    if (config.value.field) valueField = config.value.field
+
+                    let format = "0,0"
+                    if (config.value.format) format = config.value.format
+
+                    let diffStyle = buildDiffStyle(obj[0], common, index)
+                    let diffTemplate = ""
+                    if (diff >= 0)
+                        diffTemplate = `<span class='webix_icon mdi mdi-arrow-up' style="color: ${config.diff.color}" ></span> <span style="${diffStyle}"; >${diff} ${config.diff.label}</span>`
+                    else if (diff < 0)
+                        diffTemplate = `<span class='webix_icon mdi mdi-arrow-down' style="color: ${config.diff["negative-color"]}" > </span> <span style="${diffStyle}"; >${diff} ${config.diff.label}</span>`
+
+                    let titleStyle = buildTitleStyle(obj[0], common, index)
+                    let subtitleStyle = buildSubtitleStyle(obj[0], common, index)
+                    let valueStyle = buildValueStyle(obj[0], common, index)
+
+                    let value = numeral(obj[0][valueField]).format(format)
         
                     let template = `<div>` + 
                             `<div class='bignumber-title'><span style="${titleStyle};"> ${customerStatus}</span></div>`+
                             `<div class='bignumber-subtitle'><span style="${subtitleStyle};"> ${config.subtitle.label}</span></div>`+
                             `<br />`+
-                            `<div class='bignumber-value'>${obj.count}</div>` +
+                            `<div class='bignumber-value' style="${valueStyle};" >${value}</div>` +
                             `<br />`+
                             `<div class='bignumber-comparison'>${diffTemplate}</div>` +
                             `</div>`
@@ -141,17 +173,29 @@ export function createBignumberComponent(): void {
                     
                 templateFn.bind(config)
                 return templateFn
-            } 
+            },
+
+        $ready() {
+            console.log(`BigNumber.ready()`)
+            console.log(this.data)
+            }
         }
 
     webix.html.addStyle(`.bignumber {
         background-color:white
         border-style: solid;
-        border-color: red;
+        border-color: slategrey;
+        }`)
+
+    webix.html.addStyle(`.bignumber.webix_selected {
+        background-color:white
+        border-style: solid;
+        border-width: 3px;
+        border-color: orange;
         }`)
 
     webix.html.addStyle(`.bignumber-title {
-        background-color:white;
+        background-color:transparent;
         text-align: center;
         text-decoration: none;
         font-size: 24px;
@@ -161,7 +205,7 @@ export function createBignumberComponent(): void {
         }`)
 
     webix.html.addStyle(`.bignumber-subtitle {
-        background-color:white;
+        background-color:transparent;
         text-align: center;
         text-decoration: none;
 		font-size: 14px;
@@ -170,7 +214,7 @@ export function createBignumberComponent(): void {
         }`)
 
     webix.html.addStyle(`.bignumber-value {
-        background-color:white;
+        background-color:transparent;
         text-align: center;
         font-size: 44px;
         color: darkgrey;
@@ -178,10 +222,11 @@ export function createBignumberComponent(): void {
         }`)
 
     webix.html.addStyle(`.bignumber-comparison {
-        background-color:white;
+        background-color:transparent;
         text-align: center;
         font-size: 24px;
         color: royalblue;
+        negative-color: red;
         padding-top: 0px;
         }`)
         

@@ -30,7 +30,7 @@ export default class MainAppView extends JetView {
 
 		this.menuWidget = new MenuWidget(this.app, "Main Menu")
 		this.menuWidget.addWidgets(widgets)
-		console.log(this.menuWidget)
+		// console.log(this.menuWidget)
 		
 		this.sideMenu = {
 			localId: "mainapp",

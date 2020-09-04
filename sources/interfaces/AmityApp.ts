@@ -325,7 +325,7 @@ export class Query implements IQuery {
 	private machine: Nullable<QueryMachine>
 
 	constructor(options: BigQueryOptions) {
-		// console.log(`new Query()`)
+		console.log(`new Query()`)
 		// console.log(options)
 		this.options = options
 		this.query = options.query
@@ -785,7 +785,9 @@ export class MenuWidget extends JetView implements IWidget  {
 		this.menu.data.push(newItem)
 
 		const view = require(`./../views/${widget.viewName}`)
-		this.menuViews.push(this.app.createView(view, widget.viewName))
+		let newView = this.app.createView(view, widget.viewName)
+		this.menuViews.push(newView)
+		// this.getRoot().addView(newView)
 		}
 
 	private addMenuItems(widgets: Array<IWidget>) {
