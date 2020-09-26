@@ -1,6 +1,16 @@
 {
-    "type": "BigQuery",
-    "name": "Accounts",
-    "query": "SELECT name, customer_status FROM `amityamitydatasandbox.amity_accounts.data20200630`"
-    ,"storage": "webix"
+  "name":"AccountStatusService",
+  "api":{
+     "getAllAccounts":{
+        "type":"BigQuery",
+        "query":"SELECT name, customer_status FROM `amityamitydatasandbox.amity_accounts.data20200630`",
+        "row_format":"query { account { name: string,  customer_status: name}}"
+     },
+     "getAccount":{
+        "type":"BigQuery",
+        "query":"SELECT name, customer_status WHERE id = @id FROM `amityamitydatasandbox.amity_accounts.data20200630`",
+        "row_format":"query { account { name: string,  customer_status: name}}"
+     }
+  },
+  "storage":"webix"
 }

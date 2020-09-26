@@ -634,21 +634,40 @@ export const defaultAppStateMacine = Machine<any, any, any>({
 export interface Methods {
 	[key: string]: (...args: any[]) => any;
 	  }
+
+enum ServiceType {
+	BIGQUERY,
+	PANDAS,
+	CUBE,
+	JSON,
+	CSV
+}
+
+enum StorageType {
+	WEBIX
+	}
 	  
 export interface IService {
 		name: string
-		useValue?: any
-		useDefinedValue?: any
-		useFactory?: (...args: any[]) => any
-		useClass?: { new(...args: any[]): any; }
-		usePandas?: {}
-		useCube?: {}
-		useDataCollection?: {}
-		deps?: any[]
+		type: ServiceType
+		query: string
+		storage:  StorageType
+
+		start(): void
+
+		getData(): void
+		// useValue?: any
+		// useDefinedValue?: any
+		// useFactory?: (...args: any[]) => any
+		// useClass?: { new(...args: any[]): any; }
+		// usePandas?: {}
+		// useCube?: {}
+		// useDataCollection?: {}
+		// deps?: any[]
 		// NOTE: Providers will have extra properties which are not statically defined here.
 		// This extra property is needed to make TSC less strict, and enable extra properties.
-		[others: string]: any;
-		methods?: Methods;
+		// [others: string]: any;
+		// methods?: Methods;
 	  }
 
 class AppSize {
@@ -735,6 +754,7 @@ export class MenuWidget extends JetView implements IWidget  {
 			layout:"y", 
 			select:true,
 			template:"<span class='webix_icon #icon#'></span> #value# ",
+			
 			on:{
 				onBeforeSelect: function (id) {
 					// console.log(`onBeforeSelect(${id})`)
@@ -770,7 +790,7 @@ export class MenuWidget extends JetView implements IWidget  {
 		this.addMenuItems(this.widgets)
 		}
 
-	private addMenuItem(widget: IWidget) {
+	private addMenuItem (widget: IWidget): void {
 		// console.log(`addMenuItem()`)
 		// console.log(widget)
 
@@ -786,8 +806,10 @@ export class MenuWidget extends JetView implements IWidget  {
 
 		const view = require(`./../views/${widget.viewName}`)
 		let newView = this.app.createView(view, widget.viewName)
+		console.log(this.app.getSubView())
 		this.menuViews.push(newView)
-		// this.getRoot().addView(newView)
+		// this.$$("app:menu").ui.
+		// this.app.config.views.push(newView)
 		}
 
 	private addMenuItems(widgets: Array<IWidget>) {
@@ -808,7 +830,7 @@ export class MenuWidget extends JetView implements IWidget  {
 		}
 
 	ready() {
-		// console.log(`MenuWidget.ready()`)
+		console.log(`MenuWidget.ready()`)
 		this.menuView = this.$$('app:menu')
 		let n = this.menuView.getIdByIndex(0)
 		// this.menuView.select(n)
@@ -988,3 +1010,5 @@ export class PandasDataSource implements IWebixDataSource {
 		}
 	}
 	***/
+
+

@@ -2,77 +2,84 @@
 import { RSA_PSS_SALTLEN_AUTO } from "constants"
 import numeral from "numeral"
 export function createBignumberComponent(): void {
-    // console.log(`createBignumberComponent()`)
+    console.log(`createBignumberComponent()`)
 
-    let subtitle: string = "Subtitle"
-    let selectedId = ""
+    let self = this
+    let widgets = {}
+    let datatable = webix.ui({
+        view:"property",  
+        hidden: true,
+        height: 300, width: 200,
+        elements:[
+            { id:"rank",    header:"",              width:50},
+            { id:"title",   header:"Film title",    width:200},
+            { id:"year",    header:"Released",      width:80},
+            { id:"votes",   header:"Votes",         width:100}
+            ]
+        })
 
     let dv = {
-        height: 175,
-        view: "dataview",
-        title: { 
-            label: "Title",
-            titleColor: "teal",
-        },
-
-        subtitle: { 
-            label: subtitle,
-            subtitleColor: "red",
+        height: 500,
+        width: 200,
+        view:"tabview",
+        id: "xxx",
+        cells: [
+            /***
+            {
+            height: 400,
+            borderless: false,
+            view: "dataview",
+            id: "bignumberView", 
+            xCount:1, 
+            yCount:1,
             },
-        type: {height: 175, width: 175 },
-
-        // sizeToContent:true,
-        xCount:1, 
-        yCount:1
+            ***/
+            {template: "Hi Peter", height: 138}
+        ]
         }
         
     let api = {
         name: "bignumber",
         height: 175,
         width: 175,
-
         //default values for configuration settings
         defaults: dv,
+        $cssName: "fred",
                 
         // logic on init
         $init: function (config) {
             console.log(`bignumber.$init()`)
-
-            /***
-            let datatable = webix.ui({
-                view:"datatable",
-                id: config.id + "_datatable",
-                hidden: true,
-                columns:[
-                    { id:"rank",    header:"",              width:50},
-                    { id:"title",   header:"Film title",    width:200},
-                    { id:"year",    header:"Released",      width:80},
-                    { id:"votes",   header:"Votes",         width:100}
-                    ]
-                });
-                ***/
+            console.log(this.config)
+            
+            config = webix.extend(config, this.config, )
 
             this.order = []
             this.$view.className += " bignumber";
+            // console.log(this.$view)
+            console.log(config)
+            // let w = this.api.$$('xxx')
   
-            config.template = this._buildTemplate(config)
-            config.scroll = "y"
+            this.config.cells.push({template: this._buildTemplate(config), height: 400})
+            config.scroll = false
 
             this.attachEvent("onItemClick", function(id){
-                webix.message(`Item clicked + ${id} :: ${this.selectedId}`);
-                if (this.selectedId != "") this.unselect(this.selectedId)
-                this.select(id)
-                this.selectedId = id
+                console.log(`onItemClick(${id})`)
+                console.log(`onItemClick(${self.selectedId})`)
+                if (!widgets[id]) widgets[id] = this
+
+                if (widgets[self.selectedId] != undefined) {
+                    widgets[self.selectedId].unselect()            
+                    }
+
+                this.select()
+                this.refresh()
+                self.selectedId = id
                 })
             },
 
             _buildTemplate(config) {
-                console.log(`_buildTemplate()`)
-                console.log(config)
 
                 function buildTitleStyle(obj, common, index) {
-                    console.log(`buildTitleStyle()`)
-                    console.log(obj)
 
                     let style = ""
                     let title = config.title
@@ -135,8 +142,6 @@ export function createBignumberComponent(): void {
                     }
     
                 let templateFn = function(obj, common, index) {
-                    console.log(`templateFn()`)
-                    console.log(obj)
         
                     let customerStatus = obj[0].customer_status.toUpperCase()
                     let diff = obj[0].count - obj[0].prevCount
@@ -177,18 +182,16 @@ export function createBignumberComponent(): void {
 
         $ready() {
             console.log(`BigNumber.ready()`)
-            console.log(this.data)
+            // console.log(this.data)
             }
         }
 
     webix.html.addStyle(`.bignumber {
-        background-color:white
         border-style: solid;
         border-color: slategrey;
         }`)
 
     webix.html.addStyle(`.bignumber.webix_selected {
-        background-color:white
         border-style: solid;
         border-width: 3px;
         border-color: orange;
@@ -217,7 +220,7 @@ export function createBignumberComponent(): void {
         background-color:transparent;
         text-align: center;
         font-size: 44px;
-        color: darkgrey;
+        color: darkgrey !important;
         padding-top: 0px;
         }`)
 
@@ -231,6 +234,7 @@ export function createBignumberComponent(): void {
         }`)
         
     webix.protoUI(api, webix.ui.dataview)
+    console.log(`createBignumberComponent(DONE)`)
     }
 
     /***

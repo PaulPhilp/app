@@ -6,7 +6,7 @@ export default class DashboardView extends JetView {
     constructor(app) {
         console.log(`DashboardView()`)
         super(app)
-        this.service = app.getService(`accountData`)
+        this.service = app.getService(`AccountStatusService`)
         this.accounts = this.service.getAllAccounts()
         }
 
@@ -39,7 +39,6 @@ export default class DashboardView extends JetView {
                     "font-size": "10px",
                     "negative-color": "red",
                     label: "accounts",
-                    "font-size": "14px",
                 }
                 },
                 {},

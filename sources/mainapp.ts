@@ -1,5 +1,14 @@
 
 const AppConfig = require("./App.json")
+const AccountsService = require('./services/accounts.json')
+
+const {
+        quicktype,
+        InputData,
+        jsonInputForTargetLanguage,
+        JSONSchemaInput,
+        JSONSchemaStore,
+      } = require("quicktype-core");
 
 import { JetApp, JetView, EmptyRouter, HashRouter, UrlRouter } from "webix-jet"
 
@@ -16,6 +25,8 @@ import {
 import {
         App
 } from './interfaces/App'
+
+import * as fs from "fs-extra";
 
 
 // import StartView from "./views/start"
@@ -35,7 +46,10 @@ import abslog from 'abslog'
 import metrics from 'metrics'
 
 import { createBignumberComponent } from './components/bignumber';
+import { createBignumberTableComponent } from './components/bignumberTable';
+
 import { errorMonitor } from "events"
+import { IJetView } from 'webix-jet/dist/types/interfaces';
 
 // type Nullable<T> = { [P in keyof T]: T[P] | null }
 
@@ -57,7 +71,7 @@ const key = {
 
 const keyFilename = "./master-crossing-687-068cbf4d1fa4.json"
 
-createBignumberComponent()
+
 
 // let startView = new StartView()
 
@@ -71,6 +85,7 @@ const config: IAppOptions = {
         }]
     }
 
+/***
 class MainView extends JetView {
         config () {
                 console.log(`MainView.config()`)
@@ -78,29 +93,18 @@ class MainView extends JetView {
                         localId: "MainApp",
                         id: "MainApp",
                         name: "MainApp",
-                        "rows":[
-                                {
-                                "view":"template",
-                                "template":"Header",
-                                "role":"placeholder",
-                                "height":50,
-                                "tooltip":{
-                                        "template":"Hello World"
-                                }
-                                },
-                                {
-                                "cols":[
-                                        {
-                                        "view":"template",
-                                        "template":"Menu",
-                                        "role":"placeholder",
-                                        "width":250
+                        "rows":[{
+                                "cols":[{
+                                                "view":"template",
+                                                "template":"Menu",
+                                                "role":"placeholder",
+                                                "width":250
                                         },
                                         {
-                                        "view":"template",
-                                        "template":"Content",
-                                        "role":"placeholder"
-                                        }
+                                                "view":"template",
+                                                "template":"Content",
+                                                "role":"placeholder"
+                                                }
                                 ],
                                 "type":"wide"
                                 },
@@ -118,6 +122,61 @@ class MainView extends JetView {
         }
 
 }
+***/
+
+/***
+
+Service
+
+type
+query
+options
+
+
+()
+start()
+getData()
+recieveData()
+
+***/
+
+async function quicktypeJSON(targetLanguage, typeName, jsonString) {
+        console.log(`quicktypeJSON(${targetLanguage}, ${typeName})`)
+        console.log(jsonString)
+        const jsonInput = jsonInputForTargetLanguage(targetLanguage);
+      
+        // We could add multiple samples for the same desired
+        // type, or many sources for other types. Here we're
+        // just making one type from one piece of sample JSON.
+        await jsonInput.addSource({
+          name: typeName,
+          samples: [jsonString],
+        });
+      
+        const inputData = new InputData();
+        inputData.addInput(jsonInput);
+      
+        return await quicktype({
+          inputData,
+          lang: targetLanguage,
+          debugPrintSchemaResolving: true
+        });
+      }
+
+async function buildService(serviceConfig) {
+
+        let service:any = {}
+        service.name = serviceConfig.name
+        let apis = serviceConfig.apis
+        let apiNames = Object.keys(defaultAppStateMacine)
+        apiNames.forEach((methodName) => {
+                let api = apis[methodName]
+                if (api.type === "BigQuery") {}
+                else if (api.type === "Graphql") {}
+
+                })
+        }
+
 
 class MainApp extends App {
 
@@ -128,9 +187,13 @@ class MainApp extends App {
 
         constructor(config:IAppOptions) {
                 super(config)
+                console.log(`MainApp()`)
+
+                createBignumberComponent()
+                createBignumberTableComponent()
                 this.uiState = defaultAppStateMacine
-                this.setService('accountData', {
-                        getAllAccounts: () => { return this.getData()}
+                this.setService('AccountStatusService', {
+                        getAccounts: () => { return this.getData()}
                         })
                 }
 
@@ -143,7 +206,20 @@ class MainApp extends App {
                 this.callEvent('app:accounts:dataReady', [])
                 }
 
-    async start():Promise<any> {
+        async start():Promise<any> {
+                console.log(`MainApp.start()`)
+
+                let data = await quicktypeJSON(
+                        "JavaScript",
+                        "Account",
+                        JSON.stringify(AccountsService.api.getAllAccounts.row_format)
+                        )
+
+                console.log(data.lines.join('/n'))
+                
+                fs.outputFileSync("AccountCovert.js", data.lines.join('/n'))
+
+
                 const service = interpret(this.uiState as StateMachine<any, any, any>).onTransition(state => {
                         // console.log(state);
                         });
@@ -172,25 +248,24 @@ class MainApp extends App {
                 // app.show("piechartAccounts")
                 }
 
-    loadWidget():void {
+        loadWidget():void {
 
-        }
+                }
 
-    hide(): void {}
+        hide(): void {}
 
-    addDataSource(): void {}
+        addDataSource(): void {}
 
-    removeDataSource(): void {}
+        removeDataSource(): void {}
 
-    destructor():void {
+        destructor():void {
 
-        }
+         }
     }
-
-function loadAppManifest() { }
 
 AppConfig.router = UrlRouter
 AppConfig.debug = true
+
 let mainApp = new MainApp(AppConfig)
 mainApp.start()
 
@@ -201,6 +276,7 @@ if (!BUILD_AS_MODULE){
                         console.log(`WEBIX ERROR ::  ${err}`)
                         console.log(`url ${url}`)
                         })
+
                 mainApp.render()
                 })
         }
